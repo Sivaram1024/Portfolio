@@ -4,65 +4,92 @@ A modern, responsive, and performance-optimized personal portfolio showcasing wo
 
 ---
 
-## 📌 Overview
+## Overview
 
-This portfolio highlights practical engineering projects, enterprise analytics dashboards, certified technical credentials, and professional experience. Designed with a clean glassmorphism aesthetic, smooth micro-interactions, responsive layouts, and interactive UI components.
-
----
-
-## 🛠️ Technologies Used
-
-- **Frontend Core**: Semantic HTML5, Vanilla Modern CSS3, JavaScript (ES6+)
-- **Styling & UI**: Custom CSS Design System, Responsive Flexbox & Grid, Glassmorphism, Lucide Icons, FontAwesome
-- **Build & Dev Tooling**: Vite 7
-- **Integrations**: EmailJS SDK for direct browser-to-inbox messaging
-- **Data & Analytics Stack**: Python (Pandas, NumPy), SQL, Power BI, Tableau, Snowflake, Google Gemini API
+This personal portfolio showcases my:
+- **Technical Skills**: Core competencies in frontend development, data analytics, artificial intelligence, and cloud tools.
+- **Projects**: Real-world engineering solutions solving problems in hiring automation, agriculture optimization, and developer productivity.
+- **Experience**: Professional journey and milestones in data analysis, business intelligence, and software engineering.
+- **Certifications**: Industry-recognized credentials verified through official links.
+- **Contact Information**: Channels to get in touch for collaborations, opportunities, or technical inquiries.
 
 ---
 
-## 🚀 Key Features
+## Technologies
 
-- **Hero & Navigation**: Dynamic greeting interaction, animated tech keyword badges, floating navigation bar with scrollspy.
-- **Interactive About Section**: Custom draggable developer terminal with dual theme switching and specialization badges.
-- **Skills Categorization**: Clear competency matrix spanning AI & Machine Learning, Data Analytics & BI, Data Management & Cloud, and Workflow Automation.
-- **Experience Journey**: Interactive scroll-driven timeline featuring an SVG trajectory tracking milestone progress.
-- **Featured Projects**:
-  - **ATS Resume Screening & Ranking Chatbot** — AI-powered candidate evaluation engine leveraging Google Gemini API and Telegram Bot.
-    - [Live Bot](https://t.me/MyResumeIQBot) | [Source Code](https://github.com/Sivaram1024/ATS_score.git)
-  - **OptiCrop** — Precision agriculture recommendation engine powered by machine learning and climatic telemetry.
-  - **CodeRadar** — Developer productivity analytics dashboard with multi-source telemetry.
-- **Professional Certifications**: Verified credentials from IBM, Oracle, Snowflake, Microsoft, and Deloitte with direct verification links.
-- **Contact Form**: EmailJS-integrated communication channel with client-side field validation and real-time status feedback.
+Built with modern web standards and tools:
+- **Core Frontend**: HTML5 (Semantic Markup), CSS3 (Modern Vanilla CSS & Glassmorphism Design System), JavaScript (ES6+ UI Logic, Interactive Canvas Background)
+- **Icons & Visuals**: Lucide Icons, Font Awesome
+- **Dev & Build Tooling**: Vite 7
+- **Form Integration**: EmailJS Browser SDK (Direct client-side contact submission)
 
 ---
 
-## 📂 Project Structure
+## Featured Projects
 
-```
+### ATS Resume Screening & Ranking Chatbot
+An AI-powered Telegram chatbot that analyzes multiple resumes against a Job Description, calculates ATS compatibility scores, identifies skill gaps, and ranks candidates using weighted scoring and Google Gemini semantic analysis.
+- **Technologies**: Python, Google Gemini API, Telegram Bot API, NLP, Render
+- **Key Features**: Multiple Resume Analysis, JD Matching & ATS Scoring, Skill Gap Analysis, Candidate Ranking
+- **Live**: [Telegram Bot](https://t.me/MyResumeIQBot)
+- **Code**: [GitHub Repository](https://github.com/Sivaram1024/ATS_score.git)
+
+### OptiCrop
+An AI-powered agricultural platform that analyzes soil and environmental data to recommend the most suitable crops using machine learning and interactive analytics.
+- **Technologies**: Python, Flask, Scikit-Learn, Pandas, Chart.js, Docker
+- **Key Features**: AI Crop Recommendation, Soil Nutrient Analysis, Crop Suitability Prediction, Interactive Analytics Dashboard
+- **Live**: [OptiCrop Web App](https://opticrop-skill-wallet.onrender.com/)
+- **Code**: [GitHub Repository](https://github.com/Sivaram1024/OptiCrop-skill-wallet)
+
+### CodeRadar
+A coding performance analytics platform that tracks student progress, visualizes coding activity, and automates performance insights through interactive dashboards.
+- **Technologies**: Excel, SharePoint, Power Automate, Power BI
+- **Key Features**: Dashboard Analytics, Performance Tracking, Leaderboard System, Automated Email Alerts
+- **Live**: [CodeRadar Dashboard](https://adityagroup-my.sharepoint.com/:x:/g/personal/23mh1a4462_acoe_edu_in/IQBFNCnkTyAhT5R-vRi9qqCRAeZyk7bhzUrsQXwxvNIG7g0?e=F1rFFH)
+- **Code**: [GitHub Repository](https://github.com/Sivaram1024/CodeRadar.git)
+
+---
+
+## Certifications
+
+Verified industry credentials displayed in the portfolio:
+- **IBM AI Certified** — [Verify Certificate](https://drive.google.com/file/d/1EIWqe_hPcwcaVacMjPKq9D7hzLyPfMGX/view?usp=drive_link)
+- **Deloitte Data Analytics Job Simulation** — [Verify Certificate](https://drive.google.com/file/d/1pt-SYE-3KTDGLE--Nu6LPPUX77MPvb5I/view?usp=drive_link)
+- **Snowflake Associate Certificate** — [Verify Certificate](https://drive.google.com/file/d/1YT2r49tfjypRQgnnNV8IhdqffqLxkNYJ/view?usp=drive_link)
+- **Oracle Generative AI OCI Certification** — [Verify Certificate](https://drive.google.com/file/d/10hK2c3h9dIOaPEfbU7OH5htANHf4EtNH/view?usp=drive_link)
+- **Microsoft Certified: Developer Associate** — [Verify Certificate](https://drive.google.com/file/d/1wypA-fGcz782QGY8-Y8VotpV6OXn73rs/view?usp=drive_link)
+
+---
+
+## Portfolio Structure
+
+```text
 Portfolio/
-├── assets/                  # Project banners, SVGs, icons, profile images
-├── public/                  # Static assets served at root (Favicon, Resume)
+├── assets/                  # Project previews, SVG brand logos, icons, profile photos
+├── public/                  # Public static assets (Favicon, Resume PDF)
 │   ├── favicon.svg
 │   └── DataAnalyst_AIKosh.pdf
-├── index.html               # Main semantic HTML structure
-├── style.css                # Design system, components, responsive styles
-├── script.js                # UI logic, animations, EmailJS handler
-├── package.json             # Build scripts and dev dependencies
-└── .gitignore               # Ignored build artifacts and OS files
+├── index.html               # Main semantic HTML structure & portfolio layout
+├── style.css                # CSS variables, glassmorphic design system, responsive styles
+├── script.js                # UI interactivity, canvas particles, animations, EmailJS handler
+├── package.json             # Project dependencies and Vite build configuration
+├── package-lock.json        # Exact dependency tree lockfile
+├── .gitignore               # Ignored build artifacts, dependencies, and OS files
+└── README.md                # Project documentation
 ```
 
 ---
 
-## 💻 Local Development
+## Local Development
 
 To run this project locally:
 
 ```bash
 # Clone the repository
-git clone https://github.com/Sivaram1024/porfolio.git
+git clone https://github.com/Sivaram1024/Portfolio.git
 
 # Navigate into the project directory
-cd porfolio
+cd Portfolio
 
 # Install dependencies
 npm install
@@ -76,8 +103,8 @@ npm run build
 
 ---
 
-## 📬 Contact & Connect
+## Contact
 
-- **Email**: [sivaramkrishna2410@gmail.com](mailto:sivaramkrishna2410@gmail.com)
-- **LinkedIn**: [linkedin.com/in/sivaram2410](https://linkedin.com/in/sivaram2410)
 - **GitHub**: [github.com/Sivaram1024](https://github.com/Sivaram1024)
+- **LinkedIn**: [linkedin.com/in/sivaram2410](https://www.linkedin.com/in/sivaram2410/)
+- **Email**: [sivaramkrishna2410@gmail.com](mailto:sivaramkrishna2410@gmail.com)

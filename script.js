@@ -1025,19 +1025,19 @@ document.addEventListener("DOMContentLoaded", () => {
       maxParticles: 90,
       minRadius: 1.6,
       maxRadius: 3.0,
-      nodeColor: "105, 110, 125",          // Soft neutral slate gray
+      nodeColor: "75, 75, 85",             // Soft charcoal dark gray (slightly darkened)
       accentColor: "124, 58, 237",         // Signature brand purple / Neural Violet (#7C3AED)
-      nodeOpacity: 0.35,                   // Base opacity for standard neutral nodes (0.30 - 0.40 with depth)
-      accentNodeOpacity: 0.46,             // Base opacity for purple accent nodes (0.38 - 0.50 with depth)
-      lineColor: "100, 105, 120",          // Soft neutral gray for standard connections
-      lineOpacity: 0.20,                   // Standard connecting lines opacity (0.16 - 0.24 depending on distance)
-      highlightLineOpacity: 0.26,          // Purple-tinted connections opacity (0.18 - 0.30 depending on distance)
-      lineWidth: 0.85,                     // Delicate thin line appearance
-      highlightLineWidth: 1.0,             // Slightly more defined line width for accent connections
+      nodeOpacity: 0.42,                   // Opacity for standard neutral nodes (0.35 - 0.42 with depth)
+      accentNodeOpacity: 0.46,             // Opacity for purple accent nodes (0.38 - 0.46 with depth)
+      lineColor: "70, 70, 80",             // Soft charcoal dark gray for standard connections
+      lineOpacity: 0.23,                   // Standard connecting lines opacity (0.18 - 0.26 depending on distance)
+      highlightLineOpacity: 0.27,          // Purple-tinted connections opacity (0.20 - 0.28 depending on distance)
+      lineWidth: 0.8,                      // Delicate thin line appearance (0.7px - 1.0px)
+      highlightLineWidth: 0.95,            // Subtle defined line width for accent connections
       maxDistance: 130,                    // Inter-node connection distance
       mouseRadius: 160,
       mouseLineOpacity: 0.28,              // Cursor connection opacity
-      mouseLineWidth: 1.05,
+      mouseLineWidth: 1.0,
       mouseAttraction: 0.025,
 
       // Elastic Spring Physics Parameters
@@ -1089,8 +1089,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const sizeRatio = Math.random();
         this.radius = CONFIG.minRadius + sizeRatio * (CONFIG.maxRadius - CONFIG.minRadius);
-        // Depth factor between 0.72 and 1.0 for subtle visual hierarchy
-        this.depth = 0.72 + sizeRatio * 0.28;
+        // Depth factor between 0.84 and 1.0 for subtle visual hierarchy (0.35 - 0.42 standard opacity)
+        this.depth = 0.84 + sizeRatio * 0.16;
         this.isAccent = Math.random() < 0.16; // ~16% subtle purple accent nodes
       }
 
@@ -1144,8 +1144,8 @@ document.addEventListener("DOMContentLoaded", () => {
         if (isPurple) {
           // Refined, subtle glow only on selected purple accent nodes
           ctx.save();
-          ctx.shadowColor = `rgba(${CONFIG.accentColor}, 0.30)`;
-          ctx.shadowBlur = 4;
+          ctx.shadowColor = `rgba(${CONFIG.accentColor}, 0.25)`;
+          ctx.shadowBlur = 3;
           ctx.beginPath();
           ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
           ctx.fillStyle = `rgba(${color}, ${opacity})`;

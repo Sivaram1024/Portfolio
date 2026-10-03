@@ -1023,21 +1023,26 @@ document.addEventListener("DOMContentLoaded", () => {
       areaPerParticle: 12000,
       minParticles: 35,
       maxParticles: 90,
-      minRadius: 1.5,
+      minRadius: 1.6,
       maxRadius: 3.0,
-      nodeColor: "15, 23, 42",     // Dark Slate RGB
-      accentColor: "79, 70, 229",  // Indigo Accent RGB
-      nodeOpacity: 0.15,
-      maxDistance: 130,
-      lineOpacity: 0.10,
-      lineWidth: 0.8,
+      nodeColor: "105, 110, 125",          // Soft neutral slate gray
+      accentColor: "124, 58, 237",         // Signature brand purple / Neural Violet (#7C3AED)
+      nodeOpacity: 0.35,                   // Base opacity for standard neutral nodes (0.30 - 0.40 with depth)
+      accentNodeOpacity: 0.46,             // Base opacity for purple accent nodes (0.38 - 0.50 with depth)
+      lineColor: "100, 105, 120",          // Soft neutral gray for standard connections
+      lineOpacity: 0.20,                   // Standard connecting lines opacity (0.16 - 0.24 depending on distance)
+      highlightLineOpacity: 0.26,          // Purple-tinted connections opacity (0.18 - 0.30 depending on distance)
+      lineWidth: 0.85,                     // Delicate thin line appearance
+      highlightLineWidth: 1.0,             // Slightly more defined line width for accent connections
+      maxDistance: 130,                    // Inter-node connection distance
       mouseRadius: 160,
-      mouseLineOpacity: 0.18,
+      mouseLineOpacity: 0.28,              // Cursor connection opacity
+      mouseLineWidth: 1.05,
       mouseAttraction: 0.025,
 
       // Elastic Spring Physics Parameters
-      springStiffness: 0.028,      // Restoring spring force k (smooth cubic-bezier style)
-      springDamping: 0.855,        // Damping coefficient c for 1.2s fluid settling
+      springStiffness: 0.028,              // Restoring spring force k (smooth cubic-bezier style)
+      springDamping: 0.855,                // Damping coefficient c for fluid settling
     };
 
     let width = 0;
@@ -1047,6 +1052,21 @@ document.addEventListener("DOMContentLoaded", () => {
     let animId = null;
 
     const mouse = { x: null, y: null };
+
+    // Reduced motion media query preference
+    const motionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+    let isReducedMotion = motionQuery.matches;
+
+    motionQuery.addEventListener("change", (e) => {
+      isReducedMotion = e.matches;
+      if (!isReducedMotion && isVisible && !animId) {
+        animId = requestAnimationFrame(animate);
+      } else if (isReducedMotion && animId) {
+        cancelAnimationFrame(animId);
+        animId = null;
+        animate();
+      }
+    });
 
     class Particle {
       constructor(w, h) {
@@ -1067,8 +1087,11 @@ document.addEventListener("DOMContentLoaded", () => {
         this.vx = 0;
         this.vy = 0;
 
-        this.radius = CONFIG.minRadius + Math.random() * (CONFIG.maxRadius - CONFIG.minRadius);
-        this.isAccent = Math.random() < 0.15;
+        const sizeRatio = Math.random();
+        this.radius = CONFIG.minRadius + sizeRatio * (CONFIG.maxRadius - CONFIG.minRadius);
+        // Depth factor between 0.72 and 1.0 for subtle visual hierarchy
+        this.depth = 0.72 + sizeRatio * 0.28;
+        this.isAccent = Math.random() < 0.16; // ~16% subtle purple accent nodes
       }
 
       update(w, h) {
@@ -1113,12 +1136,99 @@ document.addEventListener("DOMContentLoaded", () => {
       }
 
       draw() {
-        ctx.beginPath();
-        ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-        const color = this.isAccent ? CONFIG.accentColor : CONFIG.nodeColor;
-        const opacity = this.isAccent ? CONFIG.nodeOpacity * 1.5 : CONFIG.nodeOpacity;
-        ctx.fillStyle = `rgba(${color}, ${opacity})`;
-        ctx.fill();
+        const isPurple = this.isAccent;
+        const baseOpacity = isPurple ? CONFIG.accentNodeOpacity : CONFIG.nodeOpacity;
+        const opacity = (baseOpacity * this.depth).toFixed(3);
+        const color = isPurple ? CONFIG.accentColor : CONFIG.nodeColor;
+
+        if (isPurple) {
+          // Refined, subtle glow only on selected purple accent nodes
+          ctx.save();
+          ctx.shadowColor = `rgba(${CONFIG.accentColor}, 0.30)`;
+          ctx.shadowBlur = 4;
+          ctx.beginPath();
+          ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(${color}, ${opacity})`;
+          ctx.fill();
+          ctx.restore();
+        } else {
+          ctx.beginPath();
+          ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(${color}, ${opacity})`;
+          ctx.fill();
+        }
+      }
+    }
+
+    function drawConnections() {
+      const isMobile = width <= 600;
+      const isTablet = width > 600 && width <= 1024;
+      const effectiveMaxDist = isMobile ? 100 : (isTablet ? 120 : CONFIG.maxDistance);
+      const maxDistSq = effectiveMaxDist * effectiveMaxDist;
+
+      for (let i = 0; i < particles.length; i++) {
+        const p1 = particles[i];
+
+        for (let j = i + 1; j < particles.length; j++) {
+          const p2 = particles[j];
+          const dx = p1.x - p2.x;
+          const dy = p1.y - p2.y;
+          const distSq = dx * dx + dy * dy;
+
+          if (distSq < maxDistSq) {
+            const dist = Math.sqrt(distSq);
+            const distRatio = 1 - dist / effectiveMaxDist;
+            const isAccentLine = p1.isAccent || p2.isAccent;
+            const bothAccent = p1.isAccent && p2.isAccent;
+
+            ctx.beginPath();
+            ctx.moveTo(p1.x, p1.y);
+            ctx.lineTo(p2.x, p2.y);
+
+            if (bothAccent) {
+              const alpha = (CONFIG.highlightLineOpacity * distRatio).toFixed(3);
+              ctx.strokeStyle = `rgba(${CONFIG.accentColor}, ${alpha})`;
+              ctx.lineWidth = CONFIG.highlightLineWidth;
+            } else if (isAccentLine) {
+              // Delicate linear gradient blending from purple accent to soft neutral gray
+              const alpha = (CONFIG.highlightLineOpacity * 0.9 * distRatio).toFixed(3);
+              const grad = ctx.createLinearGradient(p1.x, p1.y, p2.x, p2.y);
+              const c1 = p1.isAccent ? `rgba(${CONFIG.accentColor}, ${alpha})` : `rgba(${CONFIG.lineColor}, ${alpha})`;
+              const c2 = p2.isAccent ? `rgba(${CONFIG.accentColor}, ${alpha})` : `rgba(${CONFIG.lineColor}, ${alpha})`;
+              grad.addColorStop(0, c1);
+              grad.addColorStop(1, c2);
+              ctx.strokeStyle = grad;
+              ctx.lineWidth = CONFIG.highlightLineWidth;
+            } else {
+              // Soft neutral gray connecting line
+              const alpha = (CONFIG.lineOpacity * distRatio).toFixed(3);
+              ctx.strokeStyle = `rgba(${CONFIG.lineColor}, ${alpha})`;
+              ctx.lineWidth = CONFIG.lineWidth;
+            }
+
+            ctx.stroke();
+          }
+        }
+
+        // Draw lines to cursor when hovering
+        if (mouse.x !== null && mouse.y !== null) {
+          const mdx = p1.x - mouse.x;
+          const mdy = p1.y - mouse.y;
+          const mdistSq = mdx * mdx + mdy * mdy;
+          const mMaxDistSq = CONFIG.mouseRadius * CONFIG.mouseRadius;
+
+          if (mdistSq < mMaxDistSq) {
+            const mdist = Math.sqrt(mdistSq);
+            const mAlpha = (CONFIG.mouseLineOpacity * (1 - mdist / CONFIG.mouseRadius)).toFixed(3);
+
+            ctx.beginPath();
+            ctx.moveTo(p1.x, p1.y);
+            ctx.lineTo(mouse.x, mouse.y);
+            ctx.strokeStyle = `rgba(${CONFIG.accentColor}, ${mAlpha})`;
+            ctx.lineWidth = CONFIG.mouseLineWidth;
+            ctx.stroke();
+          }
+        }
       }
     }
 
@@ -1148,13 +1258,17 @@ document.addEventListener("DOMContentLoaded", () => {
       } else if (particles.length > targetCount) {
         particles.length = targetCount;
       }
+
+      if (isReducedMotion) {
+        animate();
+      }
     }
 
     let isVisible = true;
     const heroObserver = new IntersectionObserver((entries) => {
       entries.forEach((entry) => {
         isVisible = entry.isIntersecting;
-        if (isVisible && !animId) {
+        if (isVisible && !isReducedMotion && !animId) {
           animId = requestAnimationFrame(animate);
         }
       });
@@ -1170,56 +1284,20 @@ document.addEventListener("DOMContentLoaded", () => {
 
       // 1. Update and draw particles
       for (let i = 0; i < particles.length; i++) {
-        particles[i].update(width, height);
+        if (!isReducedMotion) {
+          particles[i].update(width, height);
+        }
         particles[i].draw();
       }
 
-      // 2. Draw connecting lines between nodes
-      const isMobile = width <= 600;
-      const effectiveMaxDist = isMobile ? 95 : CONFIG.maxDistance;
-      const maxDistSq = effectiveMaxDist * effectiveMaxDist;
+      // 2. Draw connecting lines
+      drawConnections();
 
-      for (let i = 0; i < particles.length; i++) {
-        for (let j = i + 1; j < particles.length; j++) {
-          const dx = particles[i].x - particles[j].x;
-          const dy = particles[i].y - particles[j].y;
-          const distSq = dx * dx + dy * dy;
-
-          if (distSq < maxDistSq) {
-            const dist = Math.sqrt(distSq);
-            const alpha = CONFIG.lineOpacity * (1 - dist / effectiveMaxDist);
-
-            ctx.beginPath();
-            ctx.moveTo(particles[i].x, particles[i].y);
-            ctx.lineTo(particles[j].x, particles[j].y);
-            ctx.strokeStyle = `rgba(${CONFIG.nodeColor}, ${alpha})`;
-            ctx.lineWidth = CONFIG.lineWidth;
-            ctx.stroke();
-          }
-        }
-
-        // 4. Draw lines to cursor when hovering
-        if (mouse.x !== null && mouse.y !== null) {
-          const mdx = particles[i].x - mouse.x;
-          const mdy = particles[i].y - mouse.y;
-          const mdistSq = mdx * mdx + mdy * mdy;
-          const mMaxDistSq = CONFIG.mouseRadius * CONFIG.mouseRadius;
-
-          if (mdistSq < mMaxDistSq) {
-            const mdist = Math.sqrt(mdistSq);
-            const mAlpha = CONFIG.mouseLineOpacity * (1 - mdist / CONFIG.mouseRadius);
-
-            ctx.beginPath();
-            ctx.moveTo(particles[i].x, particles[i].y);
-            ctx.lineTo(mouse.x, mouse.y);
-            ctx.strokeStyle = `rgba(${CONFIG.accentColor}, ${mAlpha})`;
-            ctx.lineWidth = CONFIG.lineWidth * 1.1;
-            ctx.stroke();
-          }
-        }
+      if (!isReducedMotion) {
+        animId = requestAnimationFrame(animate);
+      } else {
+        animId = null;
       }
-
-      animId = requestAnimationFrame(animate);
     }
 
     // Mouse Movement Tracking
@@ -1227,11 +1305,17 @@ document.addEventListener("DOMContentLoaded", () => {
       const rect = heroSection.getBoundingClientRect();
       mouse.x = e.clientX - rect.left;
       mouse.y = e.clientY - rect.top;
+      if (isReducedMotion) {
+        animate();
+      }
     }, { passive: true });
 
     heroSection.addEventListener("mouseleave", () => {
       mouse.x = null;
       mouse.y = null;
+      if (isReducedMotion) {
+        animate();
+      }
     });
 
     heroSection.addEventListener("touchmove", (e) => {
@@ -1239,18 +1323,28 @@ document.addEventListener("DOMContentLoaded", () => {
         const rect = heroSection.getBoundingClientRect();
         mouse.x = e.touches[0].clientX - rect.left;
         mouse.y = e.touches[0].clientY - rect.top;
+        if (isReducedMotion) {
+          animate();
+        }
       }
     }, { passive: true });
 
     heroSection.addEventListener("touchend", () => {
       mouse.x = null;
       mouse.y = null;
+      if (isReducedMotion) {
+        animate();
+      }
     });
 
     window.addEventListener("resize", resize);
 
     resize();
-    animId = requestAnimationFrame(animate);
+    if (!isReducedMotion) {
+      animId = requestAnimationFrame(animate);
+    } else {
+      animate();
+    }
   })();
 
   // 16. About Me Section: Independent Scroll Boards & True Click-and-Drag macOS Terminal Window
